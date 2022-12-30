@@ -4,7 +4,6 @@ import sys
 
 import discord
 from dotenv import load_dotenv
-from discord.ext import commands
 
 # gets the token from the .env file
 load_dotenv()
@@ -13,13 +12,13 @@ if not TOKEN:
     print("Error, Token is not valid")
     sys.exit(1)
 
-# creates a bot object
-bot = commands.Bot()
-
 intents = discord.Intents.default()
 intents.message_content = True
 
-client = discord.Client(intents=intents)
+client = discord.Client(command_prefix='!', intents=intents)
+
+bot = discord.Bot()
+
 
 @client.event
 async def on_ready():
@@ -27,12 +26,15 @@ async def on_ready():
 
 
 # slash command to add a restaurant to the picker
-@bot.slash_command(name="addrestaurant", description="Adds a restaurant to be chosen from. Users can add as many restaurants as they want.")
+@bot.slash_command(name="addrestaurant",
+                   description="Adds a restaurant to be chosen from. Users can add as many restaurants as they want.")
 async def first_slash(ctx):
     await ctx.respond("You executed the add restaurant command!")
 
+
 # slash command to see how many wins a particular user has
-@bot.slash_command(name="score", description="Returns the number of times a user has chosen the restaurant the group goes to.")
+@bot.slash_command(name="score",
+                   description="Returns the number of times a user has chosen the restaurant the group goes to.")
 async def first_slash(ctx):
     await ctx.respond("You have helped choose __ restaurants!")
 
@@ -44,6 +46,7 @@ async def on_message(message):
 
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+
 
 # runs the bot
 client.run(TOKEN)
