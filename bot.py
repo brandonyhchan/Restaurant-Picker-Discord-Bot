@@ -12,36 +12,42 @@ if not TOKEN:
     print("Error, Token is not valid")
     sys.exit(1)
 
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(command_prefix='!', intents=intents)
-
+# creates a bot object
 bot = discord.Bot()
 
+Options = []
 
-@client.event
+@bot.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    print(f'{bot.user} has connected to Discord!')
 
 
 # slash command to add a restaurant to the picker
-@bot.slash_command(name="addrestaurant",
+@bot.slash_command(name="addrestaurant", guild_ids=[1032437764614012988],
                    description="Adds a restaurant to be chosen from. Users can add as many restaurants as they want.")
-async def first_slash(ctx):
-    await ctx.respond("You executed the add restaurant command!")
+async def addRestaurant(interaction: discord.Interaction, restaurant):
+    Options.append(restaurant)
+    await interaction.response.send_message(f'{interaction.user} added {restaurant} to the choices!')
 
 
 # slash command to see how many wins a particular user has
-@bot.slash_command(name="score",
+@bot.slash_command(name="score", guild_ids=[1032437764614012988],
                    description="Returns the number of times a user has chosen the restaurant the group goes to.")
-async def first_slash(ctx):
-    await ctx.respond("You have helped choose __ restaurants!")
+async def score(interaction: discord.Interaction):
+    await interaction.response.send_message(f'{interaction.user} has chosen the restaurant ___ times!')
 
 
-@client.event
+@bot.slash_command(name="options", guild_ids=[1032437764614012988], description="Returns the valid options that users "
+                                                                                "have submitted")
+async def options(interaction: discord.Interaction):
+    output: str = ' , '.join(Options)
+
+    await interaction.response.send_message(f'The current options to choose from are: ' + output)
+
+
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
 
     if message.content.startswith('$hello'):
@@ -49,4 +55,4 @@ async def on_message(message):
 
 
 # runs the bot
-client.run(TOKEN)
+bot.run(TOKEN)
