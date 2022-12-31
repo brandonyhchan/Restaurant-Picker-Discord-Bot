@@ -44,22 +44,30 @@ async def addRestaurant(interaction: discord.Interaction, restaurant):
                    description="Have the bot randomly pick a restaurant from the list of options.")
 async def randomChoice(interaction: discord.Interaction):
 
-    # picks a random restaurant submitted by a user from the options dictionary
-    restaurants = list(Options.values())
-    randNum: int = random.randint(0, len(restaurants) - 1)
-    name: str = restaurants[randNum]
+    outputMessage: str = ''
 
-    # if the value is a list, pick a random restaurant from the list
-    if isinstance(restaurants[randNum], list):
-        output: int = random.randint(0, len(restaurants[randNum]) - 1)
-        name = restaurants[randNum][output]
-
-    if interaction.user.id not in Score:
-        Score[interaction.user.id] = 1
+    if not Options:
+        outputMessage = 'Hey! The bot can\'t pick a restaurant if there are no options to choose from!'
     else:
-        Score[interaction.user.id] += 1
 
-    await interaction.response.send_message('The restaurant chosen is: ' + name)
+        # picks a random restaurant submitted by a user from the options dictionary
+        restaurants = list(Options.values())
+        randNum: int = random.randint(0, len(restaurants) - 1)
+        name: str = restaurants[randNum]
+
+        # if the value is a list, pick a random restaurant from the list
+        if isinstance(restaurants[randNum], list):
+            output: int = random.randint(0, len(restaurants[randNum]) - 1)
+            name = restaurants[randNum][output]
+
+        if interaction.user.id not in Score:
+            Score[interaction.user.id] = 1
+        else:
+            Score[interaction.user.id] += 1
+
+        outputMessage = 'The restaurant chosen is: ' + name
+
+    await interaction.response.send_message(outputMessage)
 
 
 # slash command to see how many wins a particular user has
@@ -67,7 +75,7 @@ async def randomChoice(interaction: discord.Interaction):
                    description="Returns the number of times a user has chosen the restaurant the group goes to.")
 async def score(interaction: discord.Interaction):
 
-    global userScore
+    userScore: int = 0
     for key in Score:
         if interaction.user.id == key:
             userScore = Score[interaction.user.id]
@@ -85,9 +93,12 @@ async def score(interaction: discord.Interaction):
 @bot.slash_command(name="options", guild_ids=[1032437764614012988], description="Returns the valid options that users "
                                                                                 "have submitted")
 async def options(interaction: discord.Interaction):
-    global optionMessage
-    if bool(Options):
+    optionMessage: str = ''
+    if not Options:
         optionMessage = 'Sorry, there are currently no restaurants being considered!'
+    else:
+        # need to add the code here to check for all the restaurants being considered, either in a list or singular
+        optionMessage = 'Hello world'
 
     await interaction.response.send_message(optionMessage)
 
