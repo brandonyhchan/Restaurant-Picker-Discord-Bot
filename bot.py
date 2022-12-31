@@ -67,7 +67,9 @@ async def randomChoice(interaction: discord.Interaction):
         else:
             Score[interaction.user.id] += 1
 
-        outputMessage = 'The restaurant chosen is: ' + name + 'Enjoy!'
+        outputMessage = 'The restaurant chosen is: ' + name + '. Enjoy!'
+
+        Options.clear()
 
     await interaction.response.send_message(outputMessage)
 
@@ -82,7 +84,7 @@ async def score(interaction: discord.Interaction):
             userScore = Score[interaction.user.id]
             break
         else:
-            userScore = 0
+            continue
 
     if userScore == 1:
         grammar = 'time'
@@ -102,6 +104,13 @@ async def options(interaction: discord.Interaction):
         optionMessage = 'Hello world'
 
     await interaction.response.send_message(optionMessage)
+
+
+# More useful if there is a timestamp, who submitted restaurant, and google maps info also
+@bot.slash_command(name="lastchoice", guild_ids=[1032437764614012988],
+                   description="Returns the last restaurant that the bot chose.")
+async def lastchoice(interaction: discord.Interaction):
+    await interaction.response.send_message(f'The last restaurant was chosen at ')
 
 
 @bot.event
