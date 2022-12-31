@@ -16,8 +16,10 @@ if not TOKEN:
 # creates a bot object
 bot = discord.Bot()
 
+# Dictionary that records all the user's submitted restaurants.
 Options = {}
 
+# Dictionary that records the scores for the users in the server.
 Score = {}
 
 
@@ -26,7 +28,7 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
 
-# slash command to add a restaurant to the picker
+# slash command to add a restaurant to the picker, users can add as many restaurants
 @bot.slash_command(name="addrestaurant", guild_ids=[1032437764614012988],
                    description="Adds a restaurant to be chosen from. Users can add as many restaurants as they want.")
 async def addRestaurant(interaction: discord.Interaction, restaurant):
@@ -40,10 +42,10 @@ async def addRestaurant(interaction: discord.Interaction, restaurant):
     await interaction.response.send_message(f'{interaction.user} added {restaurant} to the choices!')
 
 
+# slash command for the bot to randomly choose a restaurant that the users have contributed
 @bot.slash_command(name="random", guild_ids=[1032437764614012988],
                    description="Have the bot randomly pick a restaurant from the list of options.")
 async def randomChoice(interaction: discord.Interaction):
-
     outputMessage: str = ''
 
     if not Options:
@@ -65,7 +67,7 @@ async def randomChoice(interaction: discord.Interaction):
         else:
             Score[interaction.user.id] += 1
 
-        outputMessage = 'The restaurant chosen is: ' + name
+        outputMessage = 'The restaurant chosen is: ' + name + 'Enjoy!'
 
     await interaction.response.send_message(outputMessage)
 
@@ -74,7 +76,6 @@ async def randomChoice(interaction: discord.Interaction):
 @bot.slash_command(name="score", guild_ids=[1032437764614012988],
                    description="Returns the number of times a user has chosen the restaurant the group goes to.")
 async def score(interaction: discord.Interaction):
-
     userScore: int = 0
     for key in Score:
         if interaction.user.id == key:
